@@ -111,3 +111,82 @@ def exemplo_list_comprehension() -> None:
     print(quadrados)
     print(pares)
     print(quadrados_dos_pares)
+
+"""
+Conceito:
+Uma lista ligada é formada por nós em que cada nó guarda um valor e uma
+referência para o próximo nó. Ela é útil didaticamente para entender referências
+e pode oferecer inserção/remoção O(1) no início quando o nó é conhecido.
+
+Sintaxe Básica / Assinatura:
+no.valor
+no.proximo
+
+Código de Exemplo:
+O bloco de código logo abaixo demonstra o conceito com uma aplicação prática.
+
+Mapeamento de Módulos Nativo / Equivalência:
+Python não possui uma linked list simples como tipo nativo. Em aplicações reais,
+list ou collections.deque normalmente são preferidos, mas a estrutura pode ser
+implementada com classes e referências de objetos.
+
+Pontos de Atenção:
+1. Acesso ao elemento de índice n custa O(n), pois é necessário percorrer os nós.
+2. Inserção no início pode ser O(1); busca continua O(n).
+3. Em Python, não há necessidade de liberar manualmente a memória dos nós desconectados.
+"""
+
+
+@dataclass
+class NoLista:
+    valor: object
+    proximo: NoLista | None = None
+
+
+class ListaLigada:
+    def __init__(self) -> None:
+        self.cabeca: NoLista | None = None
+
+    def inserir_inicio(self, valor: object) -> None:
+        self.cabeca = NoLista(valor, self.cabeca)
+
+    def inserir_fim(self, valor: object) -> None:
+        novo_no = NoLista(valor)
+
+        if self.cabeca is None:
+            self.cabeca = novo_no
+            return
+
+        atual = self.cabeca
+        while atual.proximo is not None:
+            atual = atual.proximo
+        atual.proximo = novo_no
+
+    def remover_inicio(self) -> object:
+        if self.cabeca is None:
+            raise IndexError("A lista ligada está vazia.")
+
+        valor = self.cabeca.valor
+        self.cabeca = self.cabeca.proximo
+        return valor
+
+    def para_lista(self) -> list[object]:
+        valores: list[object] = []
+        atual = self.cabeca
+
+        while atual is not None:
+            valores.append(atual.valor)
+            atual = atual.proximo
+
+        return valores
+
+
+def exemplo_lista_ligada() -> None:
+    lista = ListaLigada()
+    lista.inserir_inicio(20)
+    lista.inserir_inicio(10)
+    lista.inserir_fim(30)
+
+    print(lista.para_lista())
+    print(lista.remover_inicio())
+    print(lista.para_lista())
